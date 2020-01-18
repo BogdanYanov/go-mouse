@@ -123,7 +123,7 @@ func (m *Mouse) Info() {
 	fmt.Printf("Mouse information:\n"+
 		"X position - %d\n"+
 		"Y position - %d\n"+
-		"sensitivity - %d\n"+
+		"Sensitivity - %d\n"+
 		"Is left button pressed? - %v\n"+
 		"Is right button pressed? - %v\n"+
 		"Scroll value - %d\n",
