@@ -8,10 +8,6 @@ import (
 	"testing"
 )
 
-const (
-	width, height uint32 = 1024, 768
-)
-
 var testInfoStr = `Mouse information:
 X position - 512
 Y position - 384
@@ -22,7 +18,7 @@ Scroll value - 9
 `
 
 func TestMouse_New(t *testing.T) {
-	s := NewScreen(width, height)
+	s := NewScreen()
 	m := NewMouse(*s)
 	if m == nil {
 		t.Errorf("mouse is nil")
@@ -30,7 +26,7 @@ func TestMouse_New(t *testing.T) {
 }
 
 func TestMouse_Move(t *testing.T) {
-	s := NewScreen(width, height)
+	s := NewScreen()
 	m := NewMouse(*s)
 	m.Move(1260, 1024, *s)
 	if m.posX != s.width || m.posY != s.height {
@@ -60,7 +56,7 @@ func TestMouse_Move(t *testing.T) {
 }
 
 func TestMouse_Sensitivity(t *testing.T) {
-	s := NewScreen(width, height)
+	s := NewScreen()
 	m := NewMouse(*s)
 	m.SetSensitivity(11)
 	if m.sensitivity != 10 {
@@ -73,7 +69,7 @@ func TestMouse_Sensitivity(t *testing.T) {
 }
 
 func TestMouse_WheelScrollUp(t *testing.T) {
-	s := NewScreen(width, height)
+	s := NewScreen()
 	m := NewMouse(*s)
 	m.wheel.scrollValue = 7
 	m.ScrollUp()
@@ -89,7 +85,7 @@ func TestMouse_WheelScrollUp(t *testing.T) {
 }
 
 func TestMouse_WheelScrollDown(t *testing.T) {
-	s := NewScreen(width, height)
+	s := NewScreen()
 	m := NewMouse(*s)
 	m.wheel.scrollValue = 3
 	m.ScrollDown()
@@ -104,7 +100,7 @@ func TestMouse_WheelScrollDown(t *testing.T) {
 }
 
 func TestMouse_Click(t *testing.T) {
-	s := NewScreen(width, height)
+	s := NewScreen()
 	m := NewMouse(*s)
 	m.LeftBtnDown()
 	if m.leftBtn.btnPressed != true {
@@ -125,8 +121,9 @@ func TestMouse_Click(t *testing.T) {
 }
 
 func TestMouse_Info(t *testing.T) {
-	s := NewScreen(width, height)
+	s := NewScreen()
 	m := NewMouse(*s)
+	var err error
 	m.SetSensitivity(5)
 	m.LeftBtnDown()
 	m.wheel.scrollValue = 8
@@ -138,11 +135,18 @@ func TestMouse_Info(t *testing.T) {
 
 	m.Info()
 
-	w.Close()
+	err = w.Close()
+	if err != nil {
+		t.Errorf("Error closing pipe: %s\n", err)
+	}
+
 	os.Stdout = oldOutput
 
 	var buf bytes.Buffer
-	io.Copy(&buf, r)
+	_, err = io.Copy(&buf, r)
+	if err != nil {
+		t.Errorf("Error while copy: %s\n", err)
+	}
 
 	if equal := strings.Compare(testInfoStr, buf.String()); equal != 0 {
 		t.Errorf("Error info output. Expected:\n%s\nGot:\n%s", testInfoStr, buf.String())
@@ -150,8 +154,9 @@ func TestMouse_Info(t *testing.T) {
 }
 
 func TestMouse_Reset(t *testing.T) {
-	s := NewScreen(width, height)
+	s := NewScreen()
 	m := NewMouse(*s)
+	var err error
 	m.Move(1, 1, *s)
 	m.SetSensitivity(4)
 	m.RightBtnDown()
@@ -172,11 +177,17 @@ Scroll value - 5
 
 	m.Info()
 
-	w.Close()
+	err = w.Close()
+	if err != nil {
+		t.Errorf("Error closing pipe: %s\n", err)
+	}
 	os.Stdout = oldOutput
 
 	var buf bytes.Buffer
-	io.Copy(&buf, r)
+	_, err = io.Copy(&buf, r)
+	if err != nil {
+		t.Errorf("Error while copy: %s\n", err)
+	}
 
 	if equal := strings.Compare(str, buf.String()); equal != 0 {
 		t.Errorf("Error info output. Expected:\n%s\nGot:\n%s", str, buf.String())

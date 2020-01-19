@@ -5,8 +5,8 @@ import (
 )
 
 const (
-	minSettingValue uint8 = 1
-	maxSettingValue uint8 = 10
+	minSettingValue     uint8 = 1
+	maxSettingValue     uint8 = 10
 	defaultSettingValue uint8 = 5
 )
 
@@ -139,4 +139,3 @@ func (m *Mouse) Reset(screen Screen) {
 	m.wheel.scrollValue = defaultSettingValue
 	m.SetSensitivity(minSettingValue)
 }
-
