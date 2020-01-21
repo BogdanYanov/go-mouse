@@ -2,34 +2,21 @@ package cmd
 
 import (
 	"github.com/BogdanYanov/go-mouse/mouse"
-	"github.com/manifoldco/promptui"
 	"github.com/spf13/cobra"
 )
 
 type buttonReleaser struct {
 	mouse *mouse.Mouse
+	prompter *Prompter
 }
 
 type buttonPresser struct {
 	mouse *mouse.Mouse
+	prompter *Prompter
 }
 
-func selectBtn() (result string, err error) {
-	prompt := promptui.Select{
-		Label: "Select button",
-		Items: []string{"Right", "Left", "Both"},
-	}
-
-	_, result, err = prompt.Run()
-	if err != nil {
-		return "", err
-	}
-
-	return result, nil
-}
-
-func NewButtonReleaser(mouse *mouse.Mouse) *cobra.Command {
-	buttonReleaser := &buttonReleaser{mouse}
+func NewButtonReleaser(mouse *mouse.Mouse, prompter *Prompter) *cobra.Command {
+	buttonReleaser := &buttonReleaser{mouse, prompter}
 
 	var btnUpCmd = &cobra.Command{
 		Use:   "btn-up",
@@ -42,8 +29,8 @@ func NewButtonReleaser(mouse *mouse.Mouse) *cobra.Command {
 	return btnUpCmd
 }
 
-func NewButtonPresser(mouse *mouse.Mouse) *cobra.Command {
-	buttonPresser := &buttonPresser{mouse}
+func NewButtonPresser(mouse *mouse.Mouse, prompter *Prompter) *cobra.Command {
+	buttonPresser := &buttonPresser{mouse, prompter}
 
 	btnDownCmd := &cobra.Command{
 		Use:   "btn-down",
@@ -57,7 +44,7 @@ func NewButtonPresser(mouse *mouse.Mouse) *cobra.Command {
 }
 
 func (br *buttonReleaser) Exec(cmd *cobra.Command, args []string) error {
-	result, err := selectBtn()
+	result, err := br.prompter.selectBtn()
 	if err != nil {
 		return err
 	}
@@ -76,7 +63,7 @@ func (br *buttonReleaser) Exec(cmd *cobra.Command, args []string) error {
 }
 
 func (bp *buttonPresser) Exec(cmd *cobra.Command, args []string) error {
-	result, err := selectBtn()
+	result, err := bp.prompter.selectBtn()
 	if err != nil {
 		return err
 	}

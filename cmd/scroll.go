@@ -2,16 +2,16 @@ package cmd
 
 import (
 	"github.com/BogdanYanov/go-mouse/mouse"
-	"github.com/manifoldco/promptui"
 	"github.com/spf13/cobra"
 )
 
 type mouseWheelScroller struct {
 	mouse *mouse.Mouse
+	prompter *Prompter
 }
 
-func NewMouseWheelScroller(mouse *mouse.Mouse) *cobra.Command {
-	mouseWheelScroller := &mouseWheelScroller{mouse}
+func NewMouseWheelScroller(mouse *mouse.Mouse, prompter *Prompter) *cobra.Command {
+	mouseWheelScroller := &mouseWheelScroller{mouse, prompter}
 
 	var scrollCmd = &cobra.Command{
 		Use:   "scroll",
@@ -25,7 +25,7 @@ func NewMouseWheelScroller(mouse *mouse.Mouse) *cobra.Command {
 }
 
 func (mws *mouseWheelScroller) Exec(cmd *cobra.Command, args []string) error {
-	result, err := selectScrollDirection()
+	result, err := mws.prompter.selectScrollDirection()
 	if err != nil {
 		return err
 	}
@@ -40,16 +40,3 @@ func (mws *mouseWheelScroller) Exec(cmd *cobra.Command, args []string) error {
 	return nil
 }
 
-func selectScrollDirection() (result string, err error) {
-	prompt := promptui.Select{
-		Label: "Select scroll direction",
-		Items: []string{"Up", "Down"},
-	}
-
-	_, result, err = prompt.Run()
-	if err != nil {
-		return "", err
-	}
-
-	return result, nil
-}

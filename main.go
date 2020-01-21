@@ -21,20 +21,19 @@ func init() {
 	screen := NewScreen()
 	mouse := NewMouse(*screen)
 	rootCmd.AddCommand(
-		cmd.NewButtonPresser(mouse),
-		cmd.NewButtonReleaser(mouse),
+		cmd.NewButtonPresser(mouse, prompter),
+		cmd.NewButtonReleaser(mouse, prompter),
 		cmd.NewMouseMover(mouse, screen),
 		cmd.NewMouseInformer(mouse),
 		cmd.NewMouseRestorer(mouse, screen),
-		cmd.NewMouseWheelScroller(mouse),
+		cmd.NewMouseWheelScroller(mouse, prompter),
 		cmd.NewMouseSensor(mouse))
 	prompter = cmd.NewPrompter(rootCmd)
 }
 
 func main() {
 	for {
-		err := prompter.SelectMenu()
-		if err != nil {
+		if err := prompter.SelectMenu(); err != nil {
 			fmt.Println("Error:", err)
 			os.Exit(1)
 		}

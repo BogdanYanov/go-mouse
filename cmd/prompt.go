@@ -64,6 +64,34 @@ func (p *Prompter) SelectMenu() error {
 	return nil
 }
 
+func (p *Prompter) selectBtn() (result string, err error) {
+	prompt := promptui.Select{
+		Label: "Select button",
+		Items: []string{"Right", "Left", "Both"},
+	}
+
+	_, result, err = prompt.Run()
+	if err != nil {
+		return "", err
+	}
+
+	return result, nil
+}
+
+func (p *Prompter) selectScrollDirection() (result string, err error) {
+	prompt := promptui.Select{
+		Label: "Select scroll direction",
+		Items: []string{"Up", "Down"},
+	}
+
+	_, result, err = prompt.Run()
+	if err != nil {
+		return "", err
+	}
+
+	return result, nil
+}
+
 func clearConsole() error {
 	cmd := exec.Command("clear") //Linux example, its tested
 	cmd.Stdout = os.Stdout
