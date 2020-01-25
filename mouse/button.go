@@ -1,16 +1,14 @@
 package mouse
 
 // Button implements Up, Down and contains a button pressed state
-type Button struct {
-	btnPressed bool
+type button struct {
+	isPressed bool
 }
 
-// Down simulates a button press
-func (btn *Button) down() {
-	btn.btnPressed = true
+func (btn *button) down() {
+	btn.isPressed = true
 }
 
-// Up simulates a button release
-func (btn *Button) up() {
-	btn.btnPressed = false
+func (btn *button) up() {
+	btn.isPressed = false
 }

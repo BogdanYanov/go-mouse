@@ -1,11 +1,10 @@
 package mouse
 
-// Wheel contains scroll value of mouse wheel.
-type Wheel struct {
+type wheel struct {
 	scrollValue uint8
 }
 
-func (w *Wheel) scrollUp() {
+func (w *wheel) scrollUp() {
 	if w.scrollValue != maxSettingValue {
 		w.scrollValue++
 	} else {
@@ -13,7 +12,7 @@ func (w *Wheel) scrollUp() {
 	}
 }
 
-func (w *Wheel) scrollDown() {
+func (w *wheel) scrollDown() {
 	if w.scrollValue != minSettingValue {
 		w.scrollValue--
 	} else {

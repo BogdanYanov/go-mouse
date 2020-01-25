@@ -9,6 +9,7 @@ type mouseInformer struct {
 	mouse *mouse.Mouse
 }
 
+// NewMouseInformer create a new cobra command that displays information about the state of the mouse.
 func NewMouseInformer(mouse *mouse.Mouse) *cobra.Command {
 	mouseInformer := &mouseInformer{mouse}
 

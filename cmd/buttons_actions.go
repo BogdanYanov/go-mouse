@@ -6,15 +6,16 @@ import (
 )
 
 type buttonReleaser struct {
-	mouse *mouse.Mouse
+	mouse    *mouse.Mouse
 	prompter *Prompter
 }
 
 type buttonPresser struct {
-	mouse *mouse.Mouse
+	mouse    *mouse.Mouse
 	prompter *Prompter
 }
 
+// NewButtonReleaser create a new cobra command that creates an imitation of a mouse button release.
 func NewButtonReleaser(mouse *mouse.Mouse, prompter *Prompter) *cobra.Command {
 	buttonReleaser := &buttonReleaser{mouse, prompter}
 
@@ -29,6 +30,7 @@ func NewButtonReleaser(mouse *mouse.Mouse, prompter *Prompter) *cobra.Command {
 	return btnUpCmd
 }
 
+// NewButtonPresser create a new cobra command that creates an imitation of a mouse button press.
 func NewButtonPresser(mouse *mouse.Mouse, prompter *Prompter) *cobra.Command {
 	buttonPresser := &buttonPresser{mouse, prompter}
 
@@ -51,12 +53,12 @@ func (br *buttonReleaser) Exec(cmd *cobra.Command, args []string) error {
 
 	switch result {
 	case "Right":
-		br.mouse.RightBtnUp()
+		br.mouse.RightButtonUp()
 	case "Left":
-		br.mouse.LeftBtnUp()
+		br.mouse.LeftButtonUp()
 	case "Both":
-		br.mouse.RightBtnUp()
-		br.mouse.LeftBtnUp()
+		br.mouse.RightButtonUp()
+		br.mouse.LeftButtonUp()
 	}
 
 	return nil
@@ -70,12 +72,12 @@ func (bp *buttonPresser) Exec(cmd *cobra.Command, args []string) error {
 
 	switch result {
 	case "Right":
-		bp.mouse.RightBtnDown()
+		bp.mouse.RightButtonDown()
 	case "Left":
-		bp.mouse.LeftBtnDown()
+		bp.mouse.LeftButtonDown()
 	case "Both":
-		bp.mouse.RightBtnDown()
-		bp.mouse.LeftBtnDown()
+		bp.mouse.RightButtonDown()
+		bp.mouse.LeftButtonDown()
 	}
 
 	return nil

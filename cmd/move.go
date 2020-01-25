@@ -1,10 +1,13 @@
 package cmd
 
 import (
+	"bufio"
 	"fmt"
 	"github.com/BogdanYanov/go-mouse/mouse"
 	"github.com/spf13/cobra"
+	"os"
 	"strconv"
+	"strings"
 )
 
 type mouseMover struct {
@@ -12,6 +15,7 @@ type mouseMover struct {
 	screen *mouse.Screen
 }
 
+// NewMouseMover create a new cobra command that moves the mouse cursor to the coordinates specified from the console.
 func NewMouseMover(mouse *mouse.Mouse, screen *mouse.Screen) *cobra.Command {
 	mouseMover := &mouseMover{mouse, screen}
 
@@ -26,20 +30,27 @@ func NewMouseMover(mouse *mouse.Mouse, screen *mouse.Screen) *cobra.Command {
 }
 
 func (mm *mouseMover) Exec(cmd *cobra.Command, args []string) error {
-	var xStr, yStr string
+	var (
+		consoleStr  string
+		console     = bufio.NewReader(os.Stdin)
+		coordinates = make([]string, 0, 2)
+	)
 
 	fmt.Print("Enter x, y coords to moving, using space: ")
-	_, err := fmt.Scan(&xStr, &yStr)
+	consoleStr, err := console.ReadString('\n')
 	if err != nil {
 		return err
 	}
 
-	x, err := strconv.ParseUint(xStr, 10, 32)
+	consoleStr = strings.Replace(consoleStr, "\n", "", -1)
+	coordinates = strings.Split(consoleStr, " ")
+
+	x, err := strconv.ParseUint(coordinates[0], 10, 32)
 	if err != nil {
 		return fmt.Errorf("invalid coordinates: %s", err)
 	}
 
-	y, err := strconv.ParseUint(yStr, 10, 32)
+	y, err := strconv.ParseUint(coordinates[1], 10, 32)
 	if err != nil {
 		return fmt.Errorf("invalid coordinates: %s", err)
 	}

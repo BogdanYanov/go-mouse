@@ -8,10 +8,12 @@ import (
 	"os/exec"
 )
 
+// Prompter performs the actions of an interactive menu.
 type Prompter struct {
 	command *cobra.Command
 }
 
+// NewPrompter create a new prompter. Parameter "command" indicates the command that will be consider the root.
 func NewPrompter(command *cobra.Command) *Prompter {
 	return &Prompter{command}
 }
@@ -40,6 +42,7 @@ func (p *Prompter) parseResult(result string) {
 	}
 }
 
+// SelectMenu displays all possible commands for this program.
 func (p *Prompter) SelectMenu() error {
 	commands := p.getCommands()
 	commands = append(commands, "about", "exit")
@@ -51,7 +54,7 @@ func (p *Prompter) SelectMenu() error {
 
 	_, result, err := prompt.Run()
 	if err != nil {
-		return fmt.Errorf("Prompt failed %v\n", err)
+		return fmt.Errorf("prompt failed %v", err)
 	}
 
 	err = clearConsole()

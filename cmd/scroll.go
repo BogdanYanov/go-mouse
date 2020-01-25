@@ -6,10 +6,11 @@ import (
 )
 
 type mouseWheelScroller struct {
-	mouse *mouse.Mouse
+	mouse    *mouse.Mouse
 	prompter *Prompter
 }
 
+// NewMouseWheelScroller create a new cobra command that creates an imitation of a mouse wheel scroll.
 func NewMouseWheelScroller(mouse *mouse.Mouse, prompter *Prompter) *cobra.Command {
 	mouseWheelScroller := &mouseWheelScroller{mouse, prompter}
 
@@ -39,4 +40,3 @@ func (mws *mouseWheelScroller) Exec(cmd *cobra.Command, args []string) error {
 
 	return nil
 }
-
