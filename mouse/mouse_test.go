@@ -75,10 +75,10 @@ func TestMouse_WheelScrollUp(t *testing.T) {
 	m := NewMouse(*s, &Button{}, &Button{}, NewWheel())
 	scrollValue := m.wheel.State()
 	m.ScrollUp()
-	if m.wheel.State() != scrollValue + 1 {
-		t.Errorf("Error scrolling. Scroll value expected - %d, get - %d", scrollValue + 1, m.wheel.State())
+	if m.wheel.State() != scrollValue+1 {
+		t.Errorf("Error scrolling. Scroll value expected - %d, get - %d", scrollValue+1, m.wheel.State())
 	}
-	for i := m.wheel.State(); i < maxSettingValue + 2; i++ {
+	for i := m.wheel.State(); i < maxSettingValue+2; i++ {
 		m.ScrollUp()
 	}
 	if m.wheel.State() != maxSettingValue {
@@ -91,10 +91,10 @@ func TestMouse_WheelScrollDown(t *testing.T) {
 	m := NewMouse(*s, &Button{}, &Button{}, NewWheel())
 	scrollValue := m.wheel.State()
 	m.ScrollDown()
-	if m.wheel.State() != scrollValue - 1 {
-		t.Errorf("Error scrolling. Scroll value expected - %d, get - %d", scrollValue - 1, m.wheel.State())
+	if m.wheel.State() != scrollValue-1 {
+		t.Errorf("Error scrolling. Scroll value expected - %d, get - %d", scrollValue-1, m.wheel.State())
 	}
-	for i := m.wheel.State(); i > minSettingValue - 1; i-- {
+	for i := m.wheel.State(); i > minSettingValue-1; i-- {
 		m.ScrollDown()
 	}
 	m.ScrollDown()
