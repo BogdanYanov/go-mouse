@@ -1,21 +1,36 @@
 package mouse
 
-type wheel struct {
-	scrollValue uint8
+type Scroller interface {
+	ScrollUp()
+	ScrollDown()
+	State() uint8
 }
 
-func (w *wheel) scrollUp() {
-	if w.scrollValue != maxSettingValue {
-		w.scrollValue++
+type Wheel struct {
+	ScrollValue uint8
+}
+
+func NewWheel() *Wheel {
+	return &Wheel{defaultSettingValue}
+}
+
+func (w *Wheel) ScrollUp() {
+	if w.ScrollValue != maxSettingValue {
+		w.ScrollValue++
 	} else {
-		w.scrollValue = maxSettingValue
+		w.ScrollValue = maxSettingValue
 	}
 }
 
-func (w *wheel) scrollDown() {
-	if w.scrollValue != minSettingValue {
-		w.scrollValue--
+func (w *Wheel) ScrollDown() {
+	if w.ScrollValue != minSettingValue {
+		w.ScrollValue--
 	} else {
-		w.scrollValue = minSettingValue
+		w.ScrollValue = minSettingValue
 	}
 }
+
+func (w *Wheel) State() uint8{
+	return w.ScrollValue
+}
+

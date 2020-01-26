@@ -19,7 +19,7 @@ func main() {
 	)
 
 	screenCmd := mouse.NewScreen(mouse.Width, mouse.Height)
-	mouseCmd := mouse.NewMouse(*screenCmd)
+	mouseCmd := mouse.NewMouse(*screenCmd, &mouse.Button{}, &mouse.Button{}, mouse.NewWheel())
 
 	rootCmd.AddCommand(
 		cmd.NewButtonPresser(mouseCmd, prompter),

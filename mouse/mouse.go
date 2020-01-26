@@ -14,21 +14,21 @@ const (
 type Mouse struct {
 	posX        uint32
 	posY        uint32
-	leftButton  button
-	rightButton button
+	leftButton  Clicker
+	rightButton Clicker
 	sensitivity uint8
-	wheel       wheel
+	wheel       Scroller
 }
 
 // NewMouse create a new mouse.
-func NewMouse(screen Screen) *Mouse {
+func NewMouse(screen Screen, lButton Clicker, rButton Clicker, wheel Scroller) *Mouse {
 	return &Mouse{
-		screen.width / 2,
-		screen.height / 2,
-		button{},
-		button{},
-		minSettingValue,
-		wheel{defaultSettingValue},
+		posX:        screen.width / 2,
+		posY:        screen.height / 2,
+		leftButton:  lButton,
+		rightButton: rButton,
+		sensitivity: minSettingValue,
+		wheel:       wheel,
 	}
 }
 
@@ -89,32 +89,32 @@ func (m *Mouse) Sensitivity(val uint8) {
 
 // LeftButtonDown simulates the left button pressed.
 func (m *Mouse) LeftButtonDown() {
-	m.leftButton.down()
+	m.leftButton.Down()
 }
 
 // RightButtonDown simulates the right button pressed.
 func (m *Mouse) RightButtonDown() {
-	m.rightButton.down()
+	m.rightButton.Down()
 }
 
 // LeftButtonUp simulates the left button released.
 func (m *Mouse) LeftButtonUp() {
-	m.leftButton.up()
+	m.leftButton.Up()
 }
 
 // RightButtonUp simulates the right button released.
 func (m *Mouse) RightButtonUp() {
-	m.rightButton.up()
+	m.rightButton.Up()
 }
 
 // ScrollUp simulates mouse scroll up.
 func (m *Mouse) ScrollUp() {
-	m.wheel.scrollUp()
+	m.wheel.ScrollUp()
 }
 
 // ScrollDown simulates mouse scroll down.
 func (m *Mouse) ScrollDown() {
-	m.wheel.scrollDown()
+	m.wheel.ScrollDown()
 }
 
 // Info displays mouse states and settings.
@@ -126,7 +126,7 @@ func (m *Mouse) Info() {
 		"Is left button pressed? - %v\n"+
 		"Is right button pressed? - %v\n"+
 		"Scroll value - %d\n",
-		m.posX, m.posY, m.sensitivity, m.leftButton.isPressed, m.rightButton.isPressed, m.wheel.scrollValue)
+		m.posX, m.posY, m.sensitivity, m.leftButton.State(), m.rightButton.State(), m.wheel.State())
 }
 
 // Reset returns default settings and mouse states.
@@ -135,6 +135,14 @@ func (m *Mouse) Reset(screen Screen) {
 	m.posY = screen.height / 2
 	m.LeftButtonUp()
 	m.RightButtonUp()
-	m.wheel.scrollValue = defaultSettingValue
+	if m.wheel.State() > defaultSettingValue {
+		for m.wheel.State() != defaultSettingValue {
+			m.wheel.ScrollDown()
+		}
+	} else if m.wheel.State() < defaultSettingValue {
+		for m.wheel.State() != defaultSettingValue {
+			m.wheel.ScrollUp()
+		}
+	}
 	m.Sensitivity(minSettingValue)
 }

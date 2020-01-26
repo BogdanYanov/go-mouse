@@ -19,7 +19,7 @@ Scroll value - 9
 
 func TestMouse_New(t *testing.T) {
 	s := NewScreen(Width, Height)
-	m := NewMouse(*s)
+	m := NewMouse(*s, &Button{}, &Button{}, NewWheel())
 	if m == nil {
 		t.Errorf("mouse is nil")
 	}
@@ -29,7 +29,7 @@ func TestMouse_Move(t *testing.T) {
 	var x, y uint32 = 1260, 1024
 	var width, height uint32 = 1024, 768
 	s := NewScreen(width, height)
-	m := NewMouse(*s)
+	m := NewMouse(*s, &Button{}, &Button{}, NewWheel())
 	m.Move(x, y, *s)
 	if m.posX != s.width || m.posY != s.height {
 		t.Errorf("Coords out of screen. Expected X - %d, Y - %d; Get X - %d, Y - %d",
@@ -59,7 +59,7 @@ func TestMouse_Move(t *testing.T) {
 
 func TestMouse_Sensitivity(t *testing.T) {
 	s := NewScreen(Width, Height)
-	m := NewMouse(*s)
+	m := NewMouse(*s, &Button{}, &Button{}, NewWheel())
 	m.Sensitivity(11)
 	if m.sensitivity != maxSettingValue {
 		t.Errorf("Sensitivity out of range. Expected sensitivity - %d, get - %d", maxSettingValue, m.sensitivity)
@@ -72,64 +72,67 @@ func TestMouse_Sensitivity(t *testing.T) {
 
 func TestMouse_WheelScrollUp(t *testing.T) {
 	s := NewScreen(Width, Height)
-	m := NewMouse(*s)
-	m.wheel.scrollValue = 7
+	m := NewMouse(*s, &Button{}, &Button{}, NewWheel())
+	scrollValue := m.wheel.State()
 	m.ScrollUp()
-	if m.wheel.scrollValue != 8 {
-		t.Errorf("Error scrolling. Scroll value expected - %d, get - %d", 8, m.wheel.scrollValue)
+	if m.wheel.State() != scrollValue + 1 {
+		t.Errorf("Error scrolling. Scroll value expected - %d, get - %d", scrollValue + 1, m.wheel.State())
 	}
-	for i := 0; i < 4; i++ {
+	for i := m.wheel.State(); i < maxSettingValue + 2; i++ {
 		m.ScrollUp()
 	}
-	if m.wheel.scrollValue != maxSettingValue {
-		t.Errorf("Error scrolling. Scroll value expected - %d, get - %d", maxSettingValue, m.wheel.scrollValue)
+	if m.wheel.State() != maxSettingValue {
+		t.Errorf("Error scrolling. Scroll value expected - %d, get - %d", maxSettingValue, m.wheel.State())
 	}
 }
 
 func TestMouse_WheelScrollDown(t *testing.T) {
 	s := NewScreen(Width, Height)
-	m := NewMouse(*s)
-	m.wheel.scrollValue = 3
+	m := NewMouse(*s, &Button{}, &Button{}, NewWheel())
+	scrollValue := m.wheel.State()
 	m.ScrollDown()
-	if m.wheel.scrollValue != 2 {
-		t.Errorf("Error scrolling. Scroll value expected - %d, get - %d", 2, m.wheel.scrollValue)
+	if m.wheel.State() != scrollValue - 1 {
+		t.Errorf("Error scrolling. Scroll value expected - %d, get - %d", scrollValue - 1, m.wheel.State())
+	}
+	for i := m.wheel.State(); i > minSettingValue - 1; i-- {
+		m.ScrollDown()
 	}
 	m.ScrollDown()
-	m.ScrollDown()
-	if m.wheel.scrollValue != minSettingValue {
-		t.Errorf("Error scrolling. Scroll value expected - %d, get - %d", minSettingValue, m.wheel.scrollValue)
+	if m.wheel.State() != minSettingValue {
+		t.Errorf("Error scrolling. Scroll value expected - %d, get - %d", minSettingValue, m.wheel.State())
 	}
 }
 
 func TestMouse_Click(t *testing.T) {
 	s := NewScreen(Width, Height)
-	m := NewMouse(*s)
+	m := NewMouse(*s, &Button{}, &Button{}, NewWheel())
 	m.LeftButtonDown()
-	if m.leftButton.isPressed != true {
-		t.Errorf("Error button click. Expected - %v, got - %v", true, m.leftButton.isPressed)
+	if m.leftButton.State() != true {
+		t.Errorf("Error button click. Expected - %v, got - %v", true, m.leftButton.State())
 	}
 	m.LeftButtonUp()
-	if m.leftButton.isPressed != false {
-		t.Errorf("Error button click. Expected - %v, got - %v", false, m.leftButton.isPressed)
+	if m.leftButton.State() != false {
+		t.Errorf("Error button click. Expected - %v, got - %v", false, m.leftButton.State())
 	}
 	m.RightButtonDown()
-	if m.rightButton.isPressed != true {
-		t.Errorf("Error button click. Expected - %v, got - %v", true, m.rightButton.isPressed)
+	if m.rightButton.State() != true {
+		t.Errorf("Error button click. Expected - %v, got - %v", true, m.rightButton.State())
 	}
 	m.RightButtonUp()
-	if m.rightButton.isPressed != false {
-		t.Errorf("Error button click. Expected - %v, got - %v", false, m.rightButton.isPressed)
+	if m.rightButton.State() != false {
+		t.Errorf("Error button click. Expected - %v, got - %v", false, m.rightButton.State())
 	}
 }
 
 func TestMouse_Info(t *testing.T) {
 	s := NewScreen(Width, Height)
-	m := NewMouse(*s)
+	m := NewMouse(*s, &Button{}, &Button{}, NewWheel())
 	var err error
 	m.Sensitivity(5)
 	m.LeftButtonDown()
-	m.wheel.scrollValue = 8
-	m.ScrollUp()
+	for i := 0; i < 4; i++ {
+		m.ScrollUp()
+	}
 
 	oldOutput := os.Stdout
 	r, w, _ := os.Pipe()
@@ -157,7 +160,7 @@ func TestMouse_Info(t *testing.T) {
 
 func TestMouse_Reset(t *testing.T) {
 	s := NewScreen(Width, Height)
-	m := NewMouse(*s)
+	m := NewMouse(*s, &Button{}, &Button{}, NewWheel())
 	var err error
 	m.Move(1, 1, *s)
 	m.Sensitivity(4)

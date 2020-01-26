@@ -1,14 +1,24 @@
 package mouse
 
+type Clicker interface {
+	Up()
+	Down()
+	State() bool
+}
+
 // Button implements Up, Down and contains a button pressed state
-type button struct {
-	isPressed bool
+type Button struct {
+	IsPressed bool
 }
 
-func (btn *button) down() {
-	btn.isPressed = true
+func (btn *Button) Down() {
+	btn.IsPressed = true
 }
 
-func (btn *button) up() {
-	btn.isPressed = false
+func (btn *Button) Up() {
+	btn.IsPressed = false
+}
+
+func (btn *Button) State() bool {
+	return btn.IsPressed
 }
